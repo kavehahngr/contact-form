@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>فرم تماس</title>
+<style>
+  body { font-family: Tahoma; background: #f5f5f5; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+  .form-box { background: white; padding: 30px; border-radius: 12px; width: 90%; max-width: 400px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+  h2 { text-align: center; color: #333; }
+  input, textarea { width: 100%; padding: 10px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; box-sizing: border-box; }
+  input.error { border-color: red; }
+  .msg { font-size: 12px; color: red; margin: 2px 0 8px; }
+  button { width: 100%; padding: 12px; background: #4CAF50; color: white; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; margin-top: 10px; }
+  button:hover { background: #45a049; }
+  .success { color: green; text-align: center; display: none; font-size: 16px; margin-top: 10px; }
+</style>
+</head>
+<body>
+<div class="form-box">
+  <h2>📋 فرم تماس</h2>
+  <input type="text" id="name" placeholder="نام و نام خانوادگی">
+  <div class="msg" id="nameMsg"></div>
+  <input type="email" id="email" placeholder="ایمیل">
+  <div class="msg" id="emailMsg"></div>
+  <input type="tel" id="phone" placeholder="شماره موبایل (مثال: 09123456789)">
+  <div class="msg" id="phoneMsg"></div>
+  <textarea id="message" rows="4" placeholder="پیام شما"></textarea>
+  <div class="msg" id="messageMsg"></div>
+  <button onclick="submitForm()">ارسال</button>
+  <div class="success" id="success">✅ فرم با موفقیت ارسال شد!</div>
+</div>
+<script>
+const validDomains = ['gmail.com','yahoo.com','hotmail.com','outlook.com','icloud.com','protonmail.com','ymail.com'];
+
+function validateEmail(email) {
+  const parts = email.split('@');
+  if (parts.length !== 2) return false;
+  const domain = parts[1].toLowerCase();
+  return validDomains.includes(domain);
+}
+
+function validatePhone(phone) {
+  return /^09[0-9]{9}$/.test(phone);
+}
+
+function submitForm() {
+  let valid = true;
+
+  const name = document.getElementById('name').value.trim();
+  const email = document.getElementById('email').value.trim();
+  const phone = document.getElementById('phone').value.trim();
+  const message = document.getElementById('message').value.trim();
+
+  document.getElementById('nameMsg').innerText = '';
+  document.getElementById('emailMsg').innerText = '';
+  document.getElementById('phoneMsg').innerText = '';
+  document.getElementById('messageMsg').innerText = '';
+
+  if (!name) { document.getElementById('nameMsg').innerText = '⚠️ نام الزامی است'; valid = false; }
+  if (!validateEmail(email)) { document.getElementById('emailMsg').innerText = '⚠️ ایمیل معتبر نیست (مثال: name@gmail.com)'; valid = false; }
+  if (!validatePhone(phone)) { document.getElementById('phoneMsg').innerText = '⚠️ شماره موبایل باید با 09 شروع شه و ۱۱ رقم باشه'; valid = false; }
+  if (!message) { document.getElementById('messageMsg').innerText = '⚠️ پیام الزامی است'; valid = false; }
+
+  if (!valid) return;
+
+  fetch('https://shewan.app.n8n.cloud/webhook/f5911e5a-cfbb-49ef-976e-091d04c738a4', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name, email, phone, message })
+  })
+  .then(() => {
+    document.getElementById('success').style.display = 'block';
+  })
+  .catch(() => {
+    alert('خطا در ارسال. دوباره امتحان کنید.');
+  });
+}
+</script>
+</body>
+</html>
