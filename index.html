@@ -4,40 +4,214 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>فرم تماس</title>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
-  body { font-family: Tahoma; background: #f5f5f5; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-  .form-box { background: white; padding: 30px; border-radius: 12px; width: 90%; max-width: 400px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-  h2 { text-align: center; color: #333; }
-  input, textarea { width: 100%; padding: 10px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; box-sizing: border-box; }
-  input.error { border-color: red; }
-  .msg { font-size: 12px; color: red; margin: 2px 0 8px; }
-  button { width: 100%; padding: 12px; background: #4CAF50; color: white; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; margin-top: 10px; }
-  button:hover { background: #45a049; }
-  .success { color: green; text-align: center; display: none; font-size: 16px; margin-top: 10px; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Vazirmatn', Tahoma, sans-serif;
+  min-height: 100vh;
+  background: #0a0a1a;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  position: relative;
+}
+
+canvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
+}
+
+.form-box {
+  position: relative;
+  z-index: 10;
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 40px 30px;
+  border-radius: 24px;
+  width: 92%;
+  max-width: 420px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+}
+
+h2 {
+  text-align: center;
+  color: #fff;
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 28px;
+  letter-spacing: 1px;
+}
+
+.field {
+  margin-bottom: 16px;
+}
+
+label {
+  display: block;
+  color: rgba(255,255,255,0.7);
+  font-size: 13px;
+  margin-bottom: 6px;
+  font-weight: 400;
+}
+
+input, textarea {
+  width: 100%;
+  padding: 12px 16px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 12px;
+  color: #fff;
+  font-family: 'Vazirmatn', Tahoma, sans-serif;
+  font-size: 14px;
+  outline: none;
+  transition: all 0.3s;
+  direction: rtl;
+}
+
+input::placeholder, textarea::placeholder {
+  color: rgba(255,255,255,0.3);
+}
+
+input:focus, textarea:focus {
+  border-color: #6c63ff;
+  background: rgba(108,99,255,0.1);
+  box-shadow: 0 0 0 3px rgba(108,99,255,0.2);
+}
+
+input.error { border-color: #ff6b6b; }
+
+.msg {
+  font-size: 11px;
+  color: #ff6b6b;
+  margin-top: 4px;
+  min-height: 16px;
+}
+
+textarea { resize: none; height: 100px; }
+
+button {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #6c63ff, #3ecfcf);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-family: 'Vazirmatn', Tahoma, sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: all 0.3s;
+  letter-spacing: 1px;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(108,99,255,0.4);
+}
+
+.success {
+  text-align: center;
+  color: #3ecfcf;
+  font-size: 15px;
+  margin-top: 16px;
+  display: none;
+  font-weight: 600;
+}
 </style>
 </head>
 <body>
+
+<canvas id="bg"></canvas>
+
 <div class="form-box">
-  <h2>📋 فرم تماس</h2>
-  <input type="text" id="name" placeholder="نام و نام خانوادگی">
-  <div class="msg" id="nameMsg"></div>
-  <input type="email" id="email" placeholder="ایمیل">
-  <div class="msg" id="emailMsg"></div>
-  <input type="tel" id="phone" placeholder="شماره موبایل (مثال: 09123456789)">
-  <div class="msg" id="phoneMsg"></div>
-  <textarea id="message" rows="4" placeholder="پیام شما"></textarea>
-  <div class="msg" id="messageMsg"></div>
-  <button onclick="submitForm()">ارسال</button>
-  <div class="success" id="success">✅ فرم با موفقیت ارسال شد!</div>
+  <h2>✦ فرم تماس</h2>
+
+  <div class="field">
+    <label>نام و نام خانوادگی</label>
+    <input type="text" id="name" placeholder="سهیل ...">
+    <div class="msg" id="nameMsg"></div>
+  </div>
+
+  <div class="field">
+    <label>ایمیل</label>
+    <input type="email" id="email" placeholder="name@gmail.com">
+    <div class="msg" id="emailMsg"></div>
+  </div>
+
+  <div class="field">
+    <label>شماره موبایل</label>
+    <input type="tel" id="phone" placeholder="09123456789">
+    <div class="msg" id="phoneMsg"></div>
+  </div>
+
+  <div class="field">
+    <label>پیام</label>
+    <textarea id="message" placeholder="پیام خود را بنویسید..."></textarea>
+    <div class="msg" id="messageMsg"></div>
+  </div>
+
+  <button onclick="submitForm()">ارسال پیام ✦</button>
+  <div class="success" id="success">✅ پیام شما با موفقیت ارسال شد!</div>
 </div>
+
 <script>
+// انیمیشن ۰ و ۱
+const canvas = document.getElementById('bg');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+const bubbles = [];
+const chars = ['0', '1', '۰', '۱'];
+
+for (let i = 0; i < 60; i++) {
+  bubbles.push({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+    size: Math.random() * 18 + 8,
+    speed: Math.random() * 0.4 + 0.1,
+    char: chars[Math.floor(Math.random() * chars.length)],
+    opacity: Math.random() * 0.3 + 0.05,
+    drift: (Math.random() - 0.5) * 0.3
+  });
+}
+
+function animate() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  bubbles.forEach(b => {
+    ctx.font = `${b.size}px monospace`;
+    ctx.fillStyle = `rgba(108, 99, 255, ${b.opacity})`;
+    ctx.fillText(b.char, b.x, b.y);
+    b.y -= b.speed;
+    b.x += b.drift;
+    if (b.y < -20) {
+      b.y = canvas.height + 20;
+      b.x = Math.random() * canvas.width;
+    }
+  });
+  requestAnimationFrame(animate);
+}
+animate();
+
+window.addEventListener('resize', () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
+
+// Validation
 const validDomains = ['gmail.com','yahoo.com','hotmail.com','outlook.com','icloud.com','protonmail.com','ymail.com'];
 
 function validateEmail(email) {
   const parts = email.split('@');
   if (parts.length !== 2) return false;
-  const domain = parts[1].toLowerCase();
-  return validDomains.includes(domain);
+  return validDomains.includes(parts[1].toLowerCase());
 }
 
 function validatePhone(phone) {
@@ -46,20 +220,16 @@ function validatePhone(phone) {
 
 function submitForm() {
   let valid = true;
-
   const name = document.getElementById('name').value.trim();
   const email = document.getElementById('email').value.trim();
   const phone = document.getElementById('phone').value.trim();
   const message = document.getElementById('message').value.trim();
 
-  document.getElementById('nameMsg').innerText = '';
-  document.getElementById('emailMsg').innerText = '';
-  document.getElementById('phoneMsg').innerText = '';
-  document.getElementById('messageMsg').innerText = '';
+  ['nameMsg','emailMsg','phoneMsg','messageMsg'].forEach(id => document.getElementById(id).innerText = '');
 
   if (!name) { document.getElementById('nameMsg').innerText = '⚠️ نام الزامی است'; valid = false; }
   if (!validateEmail(email)) { document.getElementById('emailMsg').innerText = '⚠️ ایمیل معتبر نیست (مثال: name@gmail.com)'; valid = false; }
-  if (!validatePhone(phone)) { document.getElementById('phoneMsg').innerText = '⚠️ شماره موبایل باید با 09 شروع شه و ۱۱ رقم باشه'; valid = false; }
+  if (!validatePhone(phone)) { document.getElementById('phoneMsg').innerText = '⚠️ شماره باید با 09 شروع شه و ۱۱ رقم باشه'; valid = false; }
   if (!message) { document.getElementById('messageMsg').innerText = '⚠️ پیام الزامی است'; valid = false; }
 
   if (!valid) return;
@@ -69,12 +239,8 @@ function submitForm() {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ name, email, phone, message })
   })
-  .then(() => {
-    document.getElementById('success').style.display = 'block';
-  })
-  .catch(() => {
-    alert('خطا در ارسال. دوباره امتحان کنید.');
-  });
+  .then(() => { document.getElementById('success').style.display = 'block'; })
+  .catch(() => { alert('خطا در ارسال. دوباره امتحان کنید.'); });
 }
 </script>
 </body>
