@@ -137,10 +137,11 @@ function animate() {
   t += 0.01;
 
   grid.forEach(cell => {
-    // gradient smooth از کم به زیاد
-    const gradient = (Math.sin(cell.x * 0.008 + cell.y * 0.008 + t * cell.speed) + 1) / 2;
-    const brightness = gradient;
-  
+    const wave = Math.sin(
+      cell.x * 0.03 + cell.y * 0.03 + t + cell.phase
+    );
+    
+    const brightness = (wave + 1) / 2;
     const brightness = (wave + 1) / 2; // 0 تا 1
 
     let alpha;
